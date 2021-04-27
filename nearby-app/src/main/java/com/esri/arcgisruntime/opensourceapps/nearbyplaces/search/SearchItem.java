@@ -21,13 +21,13 @@
  * email: contracts@esri.com
  *
  */
-package com.esri.arcgisruntime.opensourceapps.nearbyplaces.filter;
+package com.esri.arcgisruntime.opensourceapps.nearbyplaces.search;
 
 /**
  * Represents a filter setting used to control what types of places are
  * viewed in the map or list.
  */
-public class FilterItem {
+public class SearchItem {
 
   private final String mTitle;
   private final int mIconId;
@@ -35,7 +35,7 @@ public class FilterItem {
   private final int mSelectedIconId;
   private final String mCategoryName;
 
-  public FilterItem (final String title, final int icon, final boolean s, final int selectedIcon, final String category){
+  public SearchItem(final String title, final int icon, final boolean s, final int selectedIcon, final String category){
     mTitle = title;
     mIconId = icon;
     mSelected = s;

@@ -37,6 +37,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.esri.arcgisruntime.opensourceapps.nearbyplaces.search.SearchContract;
+import com.esri.arcgisruntime.opensourceapps.nearbyplaces.search.SearchDialogFragment;
+import com.esri.arcgisruntime.opensourceapps.nearbyplaces.search.SearchPresenter;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -234,6 +238,13 @@ public class MapFragment extends Fragment implements  MapContract.View, PlaceLis
           dialogFragment.show(getActivity().getFragmentManager(),"dialog_fragment");
 
         }
+        if (item.getTitle().toString().equalsIgnoreCase(getString(R.string.search))){
+          final SearchDialogFragment dialogFragment = new SearchDialogFragment();
+          final SearchContract.Presenter searchPresenter = new SearchPresenter();
+          dialogFragment.setPresenter(searchPresenter);
+          dialogFragment.show(getActivity().getFragmentManager(),"dialog_fragment");
+
+        }
           if (item.getTitle().toString().equalsIgnoreCase("Route")){
             mPresenter.getRoute();
 
@@ -281,7 +292,7 @@ public class MapFragment extends Fragment implements  MapContract.View, PlaceLis
     if (mRouteHeaderDetail == null){
       mRouteHeaderDetail = (LinearLayout) inflater.inflate(R.layout.route_detail_header, null);
       TextView title = mRouteHeaderDetail.findViewById(R.id.route_txt_detail);
-      title.setText("Route Detail");
+      title.setText("ルートの詳細");
 
       mRouteHeaderDetail.setBackgroundColor(Color.WHITE);
       mMapView.addView(mRouteHeaderDetail, routeDetailLayout);
@@ -375,7 +386,7 @@ public class MapFragment extends Fragment implements  MapContract.View, PlaceLis
 
     direction.setText(maneuver.getDirectionText());
     TextView travelDistance = mRouteHeaderDetail.findViewById(R.id.directions_length_textview);
-    travelDistance.setText(String.format("%.1f meters", maneuver.getLength()));
+    travelDistance.setText(String.format("%.1f メートル", maneuver.getLength()));
 
     // Remove any previously highlighted graphic
     // that we may have added
@@ -412,7 +423,7 @@ public class MapFragment extends Fragment implements  MapContract.View, PlaceLis
     tv.setText(mCenteredPlace != null ? mCenteredPlace.getName() : null);
     tv.setTextColor(Color.WHITE);
     final TextView time = mRouteHeaderView.findViewById(R.id.routeTime);
-    time.setText(Math.round(travelTime)+" min");
+    time.setText(Math.round(travelTime)+" 分");
     final ImageView btnClose = mRouteHeaderView.findViewById(R.id.btnClose);
     final ImageView btnDirections = mRouteHeaderView.findViewById(R.id.btnDirections);
     final ActionBar ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
@@ -550,16 +561,19 @@ public class MapFragment extends Fragment implements  MapContract.View, PlaceLis
     final MenuItem listItem = menu.findItem(R.id.list_action);
     final MenuItem routeItem = menu.findItem(R.id.route_action);
     final MenuItem filterItem = menu.findItem(R.id.filter_in_map);
+    final MenuItem searchItem = menu.findItem(R.id.search_map);
 
 
     if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
       listItem.setVisible(true);
       filterItem.setVisible(true);
       routeItem.setVisible(false);
+      searchItem.setVisible(true);
     }else if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED){
       listItem.setVisible(false);
       filterItem.setVisible(true);
       routeItem.setVisible(true);
+      searchItem.setVisible(true);
     }
   }
 
@@ -877,7 +891,7 @@ public class MapFragment extends Fragment implements  MapContract.View, PlaceLis
       try {
         route = mRouteResult.getRoutes().get(0);
         if (route.getTotalLength() == 0.0) {
-          throw new Exception("Can not find the Route");
+          throw new Exception("ルートが見つかりませんでした。");
         }
       } catch (final Exception e) {
         Toast.makeText(getActivity(),

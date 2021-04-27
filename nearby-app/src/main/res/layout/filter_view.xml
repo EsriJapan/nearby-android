@@ -18,7 +18,7 @@
     <LinearLayout android:layout_width="wrap_content"
                   android:layout_height="36dp"
                   android:orientation="horizontal" android:layout_gravity="right">
-        <Button android:layout_width="match_parent" android:layout_height="match_parent" android:id="@+id/btnCancel" android:text="CANCEL"/>
-        <Button android:layout_width="match_parent" android:layout_height="match_parent" android:id="@+id/btnApply"  android:text="APPLY"/>
+        <Button android:layout_width="match_parent" android:layout_height="match_parent" android:id="@+id/btnCancel" android:text="キャンセル"/>
+        <Button android:layout_width="match_parent" android:layout_height="match_parent" android:id="@+id/btnApply"  android:text="決定"/>
     </LinearLayout>
 </LinearLayout>

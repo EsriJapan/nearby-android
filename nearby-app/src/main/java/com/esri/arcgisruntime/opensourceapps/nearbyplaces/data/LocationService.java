@@ -28,11 +28,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import android.content.Context;
 import android.location.Location;
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
 import android.util.Log;
+import android.view.View;
 
 import com.esri.arcgisruntime.concurrent.ListenableFuture;
 import com.esri.arcgisruntime.geometry.AngularUnit;
@@ -47,6 +51,7 @@ import com.esri.arcgisruntime.geometry.Multipoint;
 import com.esri.arcgisruntime.geometry.Point;
 import com.esri.arcgisruntime.geometry.SpatialReferences;
 import com.esri.arcgisruntime.loadable.LoadStatus;
+import com.esri.arcgisruntime.opensourceapps.nearbyplaces.R;
 import com.esri.arcgisruntime.tasks.geocode.GeocodeParameters;
 import com.esri.arcgisruntime.tasks.geocode.GeocodeResult;
 import com.esri.arcgisruntime.tasks.geocode.LocatorTask;
@@ -117,9 +122,30 @@ public class LocationService implements PlacesServiceApi {
     results.addDoneListener(new GeocodeProcessor(results, callback));
   }
 
+  public void getSearchPlacesFromService(@NonNull final GeocodeParameters gParameters, @NonNull View view, @NonNull final PlacesServiceCallback callback)  {
+    String searchText = "";
+    provisionOutputAttributes(gParameters);
+    searchText = searchCategories(gParameters, view);
+    final ListenableFuture<List<GeocodeResult>> results = sLocatorTask
+            .geocodeAsync(searchText, gParameters);
+    Log.i(TAG,"Geocode search started...");
+    if (results != null) {
+      results.addDoneListener(new GeocodeProcessor(results, callback));
+    }
+  }
+
   @Override public List<Place> getPlacesFromRepo() {
     return mCachedPlaces != null ? filterPlaces(new ArrayList<>(mCachedPlaces.values())) :
             null;
+  }
+
+  public void clearCachedPlaces() {
+    mCachedPlaces = new HashMap<>();
+  }
+
+  @Override public List<Place> getPlacesFromRepoSearch() {
+    List<Place> list = null;
+    return list;
   }
 
   private static void provisionCategories(@NonNull final GeocodeParameters parameters){
@@ -130,6 +156,33 @@ public class LocationService implements PlacesServiceApi {
     categories.add("Coffee Shop");
     categories.add("Bar or Pub");
   }
+
+  private static String searchCategories(@NonNull final GeocodeParameters parameters, View view){
+    final List<String> categories = parameters.getCategories();
+    String category = "";
+    SearchView mPoiSearchView = view.findViewById(R.id.poi_searchView);
+    CharSequence poiSearchVal = mPoiSearchView.getQuery();
+    if (poiSearchVal.length() > 0) {
+      category = poiSearchVal.toString();
+    }
+    Pattern p1 = Pattern.compile("^[A-Za-z0-9 ]+$");
+    Matcher m1 = p1.matcher(category);
+    boolean result = m1.matches();
+    String categoryPoi = "";
+    if (result) {
+      categoryPoi = CategoryKeeper.getInstance().getCate(category);
+    } else {
+      categoryPoi = CategoryKeeper.getInstance().getCategoryMap().get(category);
+    }
+    if (categoryPoi == null || categoryPoi.isEmpty()) {
+      categoryPoi = "POI";
+    } else {
+      category = "";
+    }
+    categories.add(categoryPoi);
+
+    return category;
+  }
   private static void provisionOutputAttributes(@NonNull final GeocodeParameters parameters){
     final List<String> outputAttributes = parameters.getResultAttributeNames();
     outputAttributes.clear();
@@ -139,7 +192,7 @@ public class LocationService implements PlacesServiceApi {
   private static List<Place> filterPlaces(final List<Place> foundPlaces){
     final Collection<Place> placesToRemove = new ArrayList<>();
     final List<String> selectedTypes = CategoryKeeper.getInstance().getSelectedTypes();
-    if (!selectedTypes.isEmpty()){
+     if (!selectedTypes.isEmpty()){
       for (final Place p: foundPlaces) {
         for (final String filter : selectedTypes){
           if (filter.equalsIgnoreCase(p.getType())){
@@ -169,7 +222,7 @@ public class LocationService implements PlacesServiceApi {
   private class GeocodeProcessor implements Runnable{
     private final ListenableFuture<List<GeocodeResult>> mResults;
     private final PlacesServiceCallback mCallback;
-    public GeocodeProcessor(final ListenableFuture<List<GeocodeResult>> results,final PlacesServiceCallback callback ){
+    public  GeocodeProcessor(final ListenableFuture<List<GeocodeResult>> results,final PlacesServiceCallback callback ){
       mCallback = callback;
       mResults = results;
     }
@@ -367,6 +420,10 @@ public class LocationService implements PlacesServiceApi {
         });
       }
     }
+  }
+
+  public void initLocatorTask() {
+    sLocatorTask = null;
   }
 
 }
