@@ -7,6 +7,7 @@
           android:icon="@drawable/ic_map_white_24px"
           android:orderInCategory="200"
           app:showAsAction="always"/>
+          app:showAsAction="always"/>
     <item android:id="@+id/filter_in_list"
           android:title="@string/filter"
           android:icon="@drawable/ic_filter_list_white_24px"

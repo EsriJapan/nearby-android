@@ -24,7 +24,11 @@
 
 package com.esri.arcgisruntime.opensourceapps.nearbyplaces.map;
 
+import android.view.View;
+
 import androidx.annotation.NonNull;
+
+import com.esri.arcgisruntime.mapping.view.MapView;
 import com.esri.arcgisruntime.opensourceapps.nearbyplaces.data.LocationService;
 import com.esri.arcgisruntime.opensourceapps.nearbyplaces.data.Place;
 import com.esri.arcgisruntime.opensourceapps.nearbyplaces.data.PlacesServiceApi;
@@ -33,6 +37,7 @@ import com.esri.arcgisruntime.geometry.Envelope;
 import com.esri.arcgisruntime.geometry.Point;
 import com.esri.arcgisruntime.tasks.geocode.GeocodeParameters;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -64,6 +69,30 @@ public class MapPresenter implements MapContract.Presenter {
       parameters.setMaxResults(MAX_RESULT_COUNT);
       parameters.setPreferredSearchLocation(g);
       mLocationService.getPlacesFromService(parameters, new PlacesServiceApi.PlacesServiceCallback() {
+        @Override public void onLoaded(final Object places) {
+          final List<Place> data = (List) places;
+
+          // Create graphics for displaying locations in map
+          mMapView.showNearbyPlaces(data);
+        }
+      });
+    }
+  }
+
+  /**
+   * Use the location service to geocode places of interest
+   * based on the map's visible area extent.
+   */
+  public final void searchPlacesNearby(MapView mapView, View view) {
+    mMapView.showProgressIndicator("Finding nearby places...");
+    final Point g =  mMapView.getMapView().getVisibleArea().getExtent().getCenter();
+
+    if ( g !=null ){
+      final GeocodeParameters parameters = new GeocodeParameters();
+      parameters.setPreferredSearchLocation(g);
+      parameters.setMaxResults(MAX_RESULT_COUNT);
+
+      mLocationService.getSearchPlacesFromService(parameters, view, new PlacesServiceApi.PlacesServiceCallback() {
         @Override public void onLoaded(final Object places) {
           final List<Place> data = (List) places;
 
@@ -116,6 +145,7 @@ public class MapPresenter implements MapContract.Presenter {
     if (existingPlaces != null){
       mMapView.showNearbyPlaces(existingPlaces);
     }else{
+      mLocationService.initLocatorTask();
       LocationService.configureService(GEOCODE_URL,
           // On locator task load success
           new Runnable() {
@@ -126,9 +156,39 @@ public class MapPresenter implements MapContract.Presenter {
           // On locator task load error
           new Runnable() {
             @Override public void run() {
-              mMapView.showMessage("The locator task was unable to load");
+              mMapView.showMessage("ロケータータスクが読み込めませんでした。");
             }
           });
+    }
+  }
+
+  /**
+   * Place presenter starts by using the device
+   * location as the initial parameter in the
+   * geocode search.
+   */
+  public final void startSearch(MapView mapView, View view) {
+    mLocationService = LocationService.getInstance();
+//    List<Place> existingPlaces = mLocationService.getPlacesFromRepo();
+    List<Place> existingPlaces = new ArrayList<>();
+    existingPlaces =  mLocationService.getPlacesFromRepoSearch();
+    if (existingPlaces != null ){
+      mMapView.showNearbyPlaces(existingPlaces);
+    }else{
+      mLocationService.initLocatorTask();
+      LocationService.configureService(GEOCODE_URL,
+              // On locator task load success
+              new Runnable() {
+                @Override public void run() {
+                  searchPlacesNearby(mapView, view);
+                }
+              },
+              // On locator task load error
+              new Runnable() {
+                @Override public void run() {
+                  mMapView.showMessage("ロケータータスクが読み込めませんでした。");
+                }
+              });
     }
   }
 

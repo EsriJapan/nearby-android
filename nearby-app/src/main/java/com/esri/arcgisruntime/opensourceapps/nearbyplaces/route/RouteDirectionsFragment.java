@@ -125,7 +125,7 @@ public class RouteDirectionsFragment extends Fragment {
       TextView textView = v.findViewById(R.id.directions_text_textview);
       textView.setText(direction.getDirectionText());
       textView = v.findViewById(R.id.directions_length_textview);
-      final String lengthString = String.format("%.1f meters", direction.getLength());
+      final String lengthString = String.format("%.1f メートル", direction.getLength());
       textView.setText(lengthString);
       return v;
     }

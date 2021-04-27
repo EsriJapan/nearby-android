@@ -4,37 +4,47 @@
     <string name="list_view">List</string>
     <string name="route_view">Route</string>
     <string name="filter">Filter</string>
+    <string name="search">Search</string>
     <!-- Service URLs -->
 
 
     <!-- Search categories for geocoding -->
 
     <!-- Toast and dialog message -->
-    <string name="no_places_found">No places found, try zooming out or checking the filter settings</string>
-    <string name="filter_dialog">Filter Places</string>
+    <string name="no_places_found">検索にヒットしませんでした。ズームアウトするか、検索項目の設定を確認してみてください。</string>
+    <string name="filter_dialog">場所のフィルタリング</string>
+    <string name="search_dialog">場所検索</string>
 
     <!-- Connectivity warnings -->
-    <string name="internet_connectivity">Internet connectivity is required for this application</string>
-    <string name="wireless_problem">Wireless Connectivity Problem</string>
+    <string name="internet_connectivity">このアプリケーションにはインターネット接続が必要です。</string>
+    <string name="wireless_problem">インターネット接続に関する問題が発生しました。</string>
 
-    <string name="location_enabled">Location tracking must be enabled for this application</string>
-    <string name="location_problem">Location Service Problem</string>
-    <string name="google_location_connection_problem">There is a problem obtaining a location</string>
-    <string name="location_permission">Location permission request was denied.</string>
-    <string name="location_tracking_off">Location tracking is required for this app.  Do you want modify the location options?</string>
-    <string name="wireless_off">An internet connection is needed for this app. Do you want to modify the wireless settings?</string>
+    <string name="location_enabled">このアプリケーションでは、位置情報の利用を有効にする必要があります。</string>
+    <string name="location_problem">位置情報サービスで問題が発生しました。</string>
+    <string name="google_location_connection_problem">位置情報の取得に問題があります。</string>
+    <string name="location_permission">ロケーションの許可申請が拒否されました。</string>
+    <string name="location_tracking_off">このアプリには位置情報のトラッキングが必要です。 位置情報のオプションを変更しますか？</string>
+    <string name="wireless_off">このアプリにはインターネット接続が必要です。Wi-Fi の設定を変更しますか？</string>
     <string name="m">m</string>
-    <string name="latlong">"Latitude/longitude from Google Location Services "</string>
-    <string name="location_connection_lost">Location connection lost, trying to re-connect</string>
-    <string name="google_location_problem">"Google location service problem: "</string>
-    <string name="place_detail">PLACE_DETAIL</string>
-    <string name="address">address</string>
+    <string name="latlong">"Google位置情報サービスからの緯度・経度 "</string>
+    <string name="location_connection_lost">位置情報の接続が失われ、再接続しようとしています。</string>
+    <string name="google_location_problem">"Googleの位置情報サービスの問題: "</string>
+    <string name="place_detail">場所の詳細</string>
+    <string name="address">住所</string>
     <string name="n">N</string>
-    <string name="dummy_address">address</string>
-    <string name="title">title</string>
-    <string name="some_long_place_name">Some long, long, long, long, long, long place name</string>
+    <string name="dummy_address">住所</string>
+    <string name="title">タイトル</string>
+    <string name="some_long_place_name">とても長い地名</string>
     <string name="nearby_places">Nearby Places</string>
     <string name="map_fragment">map fragment</string>
     <string name="route_fragment">route fragment</string>
+    <string name="searching_by_area">Searching by area...</string>
+    <string name="location_permission_denied">LocationDisplayManager cannot run because location permission was denied.</string>
+    <string name="search_hint">Enter POI</string>
+    <string name="proximity_search_hint">In proximity of...</string>
+    <string name="geo_locate_error">Geocode failed on address.</string>
+    <string name="location_not_found">No location with that name: </string>
+    <string name="redo_search_text">検索</string>
+    <string name="world_geocode_service">https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer</string>
 
 </resources>

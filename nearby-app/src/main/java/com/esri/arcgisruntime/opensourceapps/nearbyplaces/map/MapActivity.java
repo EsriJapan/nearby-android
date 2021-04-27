@@ -29,12 +29,14 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import com.esri.arcgisruntime.opensourceapps.nearbyplaces.R;
 import com.esri.arcgisruntime.opensourceapps.nearbyplaces.filter.FilterContract;
 import com.esri.arcgisruntime.opensourceapps.nearbyplaces.route.RouteDirectionsFragment;
+import com.esri.arcgisruntime.opensourceapps.nearbyplaces.search.SearchContract;
 import com.esri.arcgisruntime.opensourceapps.nearbyplaces.util.ActivityUtils;
 import com.esri.arcgisruntime.security.AuthenticationChallengeHandler;
 import com.esri.arcgisruntime.security.AuthenticationManager;
@@ -43,7 +45,7 @@ import com.esri.arcgisruntime.tasks.networkanalysis.DirectionManeuver;
 
 import java.util.List;
 
-public class MapActivity extends AppCompatActivity implements FilterContract.FilterView {
+public class MapActivity extends AppCompatActivity implements FilterContract.FilterView, SearchContract.SearchView {
 
   private MapPresenter mMapPresenter = null;
 
@@ -81,6 +83,18 @@ public class MapActivity extends AppCompatActivity implements FilterContract.Fil
     }
   }
 
+  /**
+   * When user presses 'Apply' button in filter dialog,
+   * re-filter results.
+   * @param applyFilter - boolean
+   */
+  @Override public final void onSearchDialogClose(final boolean applyFilter, View view) {
+    if (applyFilter){
+      final FragmentManager fm = getSupportFragmentManager();
+      MapFragment mapFragment = (MapFragment) fm.findFragmentById(R.id.map_fragment_container);
+      mMapPresenter.startSearch(mapFragment.getMapView(), view);
+    }
+  }
 
   /**
    * Set up map fragment

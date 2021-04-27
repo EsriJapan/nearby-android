@@ -25,6 +25,8 @@
 package com.esri.arcgisruntime.opensourceapps.nearbyplaces.places;
 
 import android.location.Location;
+import android.view.View;
+
 import androidx.annotation.NonNull;
 import com.esri.arcgisruntime.opensourceapps.nearbyplaces.data.LocationService;
 import com.esri.arcgisruntime.opensourceapps.nearbyplaces.data.Place;
@@ -33,6 +35,7 @@ import com.esri.arcgisruntime.geometry.Envelope;
 import com.esri.arcgisruntime.geometry.Point;
 import com.esri.arcgisruntime.tasks.geocode.GeocodeParameters;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -64,18 +67,48 @@ public class PlacesPresenter implements PlacesContract.Presenter {
       setPlacesNearby(existingPlaces);
     }else{
       LocationService.configureService(GEOCODE_URL,
-          // On locator task load success
-          new Runnable() {
-            @Override public void run() {
-              getPlacesNearby();
-            }
-          },
+              // On locator task load success
+              new Runnable() {
+                @Override public void run() {
+                  getPlacesNearby();
+                }
+              },
           // On locator task load error
           new Runnable() {
             @Override public void run() {
-              mPlacesView.showMessage("The locator task was unable to load");
+              mPlacesView.showMessage("ロケータータスクが読み込めませんでした。");
             }
           });
+    }
+  }
+
+  /**
+   * Place presenter starts by using the device
+   * location as the initial parameter in the
+   * geocode search.
+   */
+  public final void startSearch(View view) {
+    mPlacesView.showProgressIndicator("Finding places...");
+    mLocationService = LocationService.getInstance();
+//    List<Place> existingPlaces = mLocationService.getPlacesFromRepo();
+    List<Place> existingPlaces = new ArrayList<>();
+    existingPlaces =  mLocationService.getPlacesFromRepoSearch();
+    if (existingPlaces != null ){
+      setPlacesNearby(existingPlaces);
+    }else{
+      LocationService.configureService(GEOCODE_URL,
+              // On locator task load success
+              new Runnable() {
+                @Override public void run() {
+                  getPlacesNearby();
+                }
+              },
+              // On locator task load error
+              new Runnable() {
+                @Override public void run() {
+                  mPlacesView.showMessage("ロケータータスクが読み込めませんでした。");
+                }
+              });
     }
   }
 

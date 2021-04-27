@@ -55,11 +55,15 @@ import com.esri.arcgisruntime.opensourceapps.nearbyplaces.filter.FilterContract;
 import com.esri.arcgisruntime.opensourceapps.nearbyplaces.filter.FilterDialogFragment;
 import com.esri.arcgisruntime.opensourceapps.nearbyplaces.filter.FilterPresenter;
 import com.esri.arcgisruntime.opensourceapps.nearbyplaces.map.MapActivity;
+import com.esri.arcgisruntime.opensourceapps.nearbyplaces.search.SearchContract;
+import com.esri.arcgisruntime.opensourceapps.nearbyplaces.search.SearchDialogFragment;
+import com.esri.arcgisruntime.opensourceapps.nearbyplaces.search.SearchPresenter;
 import com.esri.arcgisruntime.opensourceapps.nearbyplaces.util.ActivityUtils;
 import com.google.android.material.snackbar.Snackbar;
 
 public class PlacesActivity extends AppCompatActivity implements FilterContract.FilterView,
-    ActivityCompat.OnRequestPermissionsResultCallback, PlacesFragment.FragmentListener {
+    ActivityCompat.OnRequestPermissionsResultCallback, PlacesFragment.FragmentListener,
+        SearchContract.SearchView {
 
   private static final int PERMISSION_REQUEST_LOCATION = 0;
   private static final int REQUEST_LOCATION_SETTINGS = 1;
@@ -226,6 +230,13 @@ public class PlacesActivity extends AppCompatActivity implements FilterContract.
         dialogFragment.show(getFragmentManager(),"dialog_fragment");
 
       }
+      if (itemTitle.equalsIgnoreCase(getString(R.string.search))){
+        final SearchDialogFragment dialogFragment = new SearchDialogFragment();
+        final SearchPresenter filterPresenter = new SearchPresenter();
+        dialogFragment.setPresenter(filterPresenter);
+        dialogFragment.show(getFragmentManager(),"dialog_fragment");
+
+      }
       return false;
     });
   }
@@ -340,4 +351,10 @@ public class PlacesActivity extends AppCompatActivity implements FilterContract.
     alertDialog.create().show();
   }
 
+  @Override
+  public void onSearchDialogClose(boolean applyFilter, View view) {
+    if (applyFilter){
+      mPresenter.startSearch(view);
+    }
+  }
 }
